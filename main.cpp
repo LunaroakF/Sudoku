@@ -1,5 +1,4 @@
 #include "sudoku.h"
-
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -9,9 +8,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
+    //设置图标 从资源文件里
     QIcon *icon = new QIcon(":/icons/icon.ico");
     a.setWindowIcon(*icon);
+
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {

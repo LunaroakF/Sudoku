@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 
+//导新窗口的两个东西
 #include "newgame.h"
 #include "ui_newgame.h"
 #include "howtoplay.h"
@@ -29,39 +30,40 @@ protected:
 
 
 public:
-    void SelectedASolt(int x,int y);
-    void ClearASolt();
-    void ClearANumber();
-    void SetButtonNumberWithAnswer(int x,int y,int data);
-    bool HasRepeat(QString solt[],int lenth);
-    bool IsSafe(int x,int y);
-    bool IsSafeInVertical(int x,int y);
-    bool IsSafeInHorizontal(int x,int y);
-    bool IsSafeInCube(int x,int y);
-    bool IsButtonEmpty(int x,int y);
-    void HideAnswer(int x,int y);
-    void GenerateLevel(int difficulty);
-    bool SolveSudoku();
-    QString FindEmpty();
+    void SelectedASolt(int x,int y);  //高亮提示方块
+    void ClearASolt();  //顺序熄灭所有提示方块
+    void ClearANumber();  //关卡重置 让所有方块已存储的内容清空
+    void SetButtonNumberWithAnswer(int x,int y,int data);  //给格子设置数字，data传入0则清空
+    bool HasRepeat(QString solt[],int lenth);  //传进来的字符串数组有没有重复的元素，有返回true 无返回false
+    bool IsSafe(int x,int y);  //检查数独可行性(行列宫无重复)
+    bool IsSafeInVertical(int x);  //检查数独可行性(列无重复)
+    bool IsSafeInHorizontal(int y);  //检查数独可行性(行无重复)
+    bool IsSafeInCube(int x,int y);  //检查数独可行性(宫无重复)
+    bool IsButtonEmpty(int x,int y);  //检查此坐标的单元格是否不存在数据 不存在返回true 存在返回false
+    void HideAnswer(int x,int y);  //隐藏 删除按钮表面数据，min内存储的答案不删除
+    void GenerateLevel(int difficulty);  //难度1-81 空格子数量 随机生成关卡
+    bool SolveSudoku();  //回溯解数独
+    QPushButton *FindButtonByPosition(int x,int y);  //根据坐标返回按钮地址
+    QString FindEmpty();  //顺序查找空的单元格并返回坐标 例如x=3，y=4返回 "34"
     Sudoku(QWidget *parent = nullptr);
     ~Sudoku();
 
 private slots:
-    void onButtonClicked();
-    void updateClock();
-    void ScoreDetal(int score);
-    void ChooseNewbee();
-    void ChooseHigher();
-    void ChooseMaster();
-    void on_pushButton_2_clicked();
-    void FileImport();
-    void on_howtoplay_clicked();
+    void onButtonClicked();  //鼠标左键单元格，插入数字用
+    void updateClock();  //时钟周期更新
+    void ChooseNewbee();  //难度选择萌新
+    void ChooseHigher();  //难度选择高手
+    void ChooseMaster();  //难度选择大师
+    void on_pushButton_2_clicked();  //打开新关卡难度选择窗口
+    void FileImport();  //以文件形式导入关卡
+    void on_howtoplay_clicked();  //打开教程窗口
 
 private:
+    void ScoreDetal(int score);  //用于修改分数
     int MaxScore = 550;  //自定义游戏最大分数
-    int NewBeeMaxScore = 800;
-    int HigherMaxScore = 1200;
-    int MasterMaxScore = 1600;
+    int NewBeeMaxScore = 800;  //萌新难度最大分数
+    int HigherMaxScore = 1200;  //高手难度最大分数
+    int MasterMaxScore = 1600;  //大师难度最大分数
     int score = MaxScore;  //当前分数
     int EmptyLeft = 0;  //剩余解密数量
     int TimeCost = 0;  //用时

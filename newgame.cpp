@@ -1,5 +1,4 @@
 #include "newgame.h"
-#include "sudoku.h"
 #include "ui_newgame.h"
 
 newgame::newgame(QWidget *parent)
