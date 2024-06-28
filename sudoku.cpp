@@ -343,6 +343,7 @@ void Sudoku::ChooseNewbee()  //难度选择萌新
     score = NewBeeMaxScore+1;
     this->setWindowTitle(mainWindowsTitle + " - " + "萌新");
     TimeCost = 0;
+    TimeCost--;
     timer->start(1000);
     updateClock();
 }
@@ -356,6 +357,7 @@ void Sudoku::ChooseHigher()  //难度选择高手
     score = HigherMaxScore+1;
     this->setWindowTitle(mainWindowsTitle + " - " + "高手");
     TimeCost = 0;
+    TimeCost--;
     timer->start(1000);
     updateClock();
 }
@@ -369,6 +371,7 @@ void Sudoku::ChooseMaster()  //难度选择大师
     score = MasterMaxScore+1;
     this->setWindowTitle(mainWindowsTitle + " - " + "大师");
     TimeCost = 0;
+    TimeCost--;
     timer->start(1000);
     updateClock();
 }
@@ -386,7 +389,7 @@ void Sudoku::onButtonClicked()//鼠标左键单元格，插入数字用
                 //对比成功 写入数据到按钮
                 button->setText(NowTheNumber);
                 EmptyLeft--;
-                if(EmptyLeft==0)
+                if(EmptyLeft==0  && score!=0)
                 {
                     //如果全部解完了
                     timer->stop();
@@ -401,7 +404,10 @@ void Sudoku::onButtonClicked()//鼠标左键单元格，插入数字用
                 timer->stop();
                 ui->Score->setStyleSheet("color: red");
                 ScoreDetal(-9);
-                timer->start();
+                if(score != 0)
+                {
+                    timer->start();
+                }
             }
         }
     }
@@ -423,9 +429,11 @@ void Sudoku::ScoreDetal(int s)  //用于修改分数
     score+=s;
     if(score<=0)
     {
+        score = 0;
         ui->Score->setText(QString::number(0));
         timer->stop();
         ui->Score->setStyleSheet("color: red");
+        this->setWindowTitle(this->windowTitle()+" - " + "失败");
         QMessageBox::critical(NULL,"你输了","游戏失败", QMessageBox::Ok);
     }
     else
@@ -440,17 +448,20 @@ void Sudoku::mousePressEvent(QMouseEvent *event)  //右键提示监听
     //409，478  游戏场景右下角坐标
     //397，396
     //9*44 = 396  一个格子占44*44个单位面积
-    //获取鼠标 XY 坐标
-    int mouse_x = event->position().x();
-    int mouse_y = event->position().y();
-    //qDebug()<<mouse_x<<","<<mouse_y;
-    //计算为单元格9*9坐标
-    int y = (mouse_x-12)/44+1;
-    int x = (mouse_y-82)/44+1;
-    //qDebug()<<x<<","<<y;
-    SelectedASolt(x,y);
+    if(event->button() == Qt::RightButton)
+    {
+        //获取鼠标 XY 坐标
+        int mouse_x = event->position().x();
+        int mouse_y = event->position().y();
+        //qDebug()<<mouse_x<<","<<mouse_y;
+        //计算为单元格9*9坐标
+        int y = (mouse_x-12)/44+1;
+        int x = (mouse_y-82)/44+1;
+        //qDebug()<<x<<","<<y;
+        SelectedASolt(x,y);
     //qDebug()<<x<<";"<<y<<IsSafe(x,y);
     //qDebug()<<IsSafe(x,y);
+    }
 }
 
 void Sudoku::mouseReleaseEvent(QMouseEvent *event)  //右键松开清空提示
@@ -474,6 +485,7 @@ Sudoku::Sudoku(QWidget *parent)  //Classui构造
         }
     }
     timer = new QTimer(this);  //初始化时钟
+
     connect(timer, &QTimer::timeout, this, &Sudoku::updateClock);  //时钟一周期运行updateClock()函数
     //绑定新窗口的按钮调用的函数
     connect(newgamewindow->ui->newbee,SIGNAL(clicked()),this,SLOT(ChooseNewbee()));  //难度窗口选择 萌新 按钮执行 ChooseNewbee()
@@ -565,14 +577,17 @@ void Sudoku::FileImport()  //以文件形式导入关卡
         timer->stop();
         ui->Score->setText("等待游戏...");
         this->setWindowTitle(mainWindowsTitle + " - "+ "错误");
-        QMessageBox::critical(NULL,  "错误",  "文件读取失败\n可能是文件不支持或是欲导入是数独无解", QMessageBox::Ok);
+        ui->Score->setStyleSheet(ui->ScoreBoard->styleSheet());  //变成默认颜色
+        QMessageBox::critical(NULL,  "错误",  "文件读取失败,可能有以下情况:\n1:文件不是关卡文件\n2:此关卡内数独无解", QMessageBox::Ok);
         this->setWindowTitle(mainWindowsTitle);
         return;
     }
     newgamewindow->close();
     ui->Score->setText(QString::number(MaxScore));
+    ui->Score->setStyleSheet(ui->ScoreBoard->styleSheet());  //变成默认颜色
     QMessageBox::information(NULL,  "完成",  "文件导入关卡成功", QMessageBox::Ok);
     TimeCost = 0;
+    TimeCost--;
     score = MaxScore+1;
     timer->start(1000);
     updateClock();
