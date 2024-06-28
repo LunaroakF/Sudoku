@@ -1,4 +1,5 @@
 # Sudoku
+![Image text](https://github.com/LunaroakF/Sudoku/blob/master/teach.png)  
 ### 规则
 数独游戏使用的拼图是由 9 个九宫格（3 格宽 × 3 格高）组成的一个 9×9 格子的正方图形。  
 通常游戏设计者会提供一个已经最少填写了 17 个数字的拼图，要求游戏者补齐拼图中空白的格子。  
